@@ -1,0 +1,15 @@
+class ATM:
+    def __init__(self, location, balance):
+        self.location = location
+        self.balance = balance
+
+    def withdraw(self, amount):
+        if self.balance >= amount:
+            self.balance -= amount
+            print(f"Withdrew ${amount} from {self.location}. New balance: ${self.balance}")
+        else:
+            print(f"Insufficient funds in {self.location}.")
+
+# Example usage
+atm1 = ATM("Downtown", 1000)
+atm1.withdraw(200)
