@@ -1,15 +1,49 @@
-# Token Faucet Smart Contract
 from pyteal import *
 
 def token_faucet():
     # Define faucet logic
     on_request = Seq([
+        # Check if the faucet has enough balance
+        If(App.localGet(Int(0), Bytes("faucet_balance")) < Int(1),
+            Return(Int(0))  # If not, return 0
+        ),
+        
+        # Check if the user is requesting more than the limit
+        If(App.localGet(Int(0), Bytes("user_balance")) + Int(1) > Int(10),
+            Return(Int(0))  # If so, return 0
+        ),
+        
+        # Check if the user is requesting tokens too frequently
+        If(App.localGet(Int(0), Bytes("last_request")) + Int(1000) > Global.latest_timestamp(),
+            Return(Int(0))  # If so, return 0
+        ),
+        
+        # If checks pass, proceed with the transaction
         App.localPut(Int(0), Bytes("faucet_balance"), App.localGet(Int(0), Bytes("faucet_balance")) - Int(1)),
         App.localPut(Int(0), Bytes("user_balance"), App.localGet(Int(0), Bytes("user_balance")) + Int(1)),
+        App.localPut(Int(0), Bytes("last_request"), Global.latest_timestamp()),
         Return(Int(1))
     ])
 
-    return on_request
+    # Define replenish logic
+    on_replenish = Seq([
+        # Check if the sender is the admin
+        If(Txn.sender() != Addr("ADMIN_ADDRESS"),
+            Return(Int(0))  # If not, return 0
+        ),
+        
+        # If check passes, proceed with the replenishment
+        App.localPut(Int(0), Bytes("faucet_balance"), App.localGet(Int(0), Bytes("faucet_balance")) + Txn.amount()),
+        Return(Int(1))
+    ])
+
+    # Combine the two logics
+    program = Cond(
+        [Txn.application_id() == Int(0), on_request],
+        [Txn.application_id() != Int(0), on_replenish]
+    )
+
+    return program
 
 if __name__ == "__main__":
     print(compileTeal(token_faucet(), mode=Mode.Application))
