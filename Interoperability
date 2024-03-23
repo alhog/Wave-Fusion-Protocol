@@ -1,0 +1,22 @@
+# Cross-Chain Bridge Contract
+from pyteal import *
+
+def cross_chain_bridge():
+    # Define bridge logic
+    on_lock = Seq([
+        Assert(Txn.application_id() == Int(0)),  # Lock assets on this chain
+        Return(Int(1))
+    ])
+
+    on_mint = Seq([
+        Assert(Txn.application_id() != Int(0)),  # Mint equivalent tokens on another chain
+        Return(Int(1))
+    ])
+
+    return Cond(
+        [Txn.application_id() == Int(0), on_lock],
+        [Txn.application_id() != Int(0), on_mint]
+    )
+
+if __name__ == "__main__":
+    print(compileTeal(cross_chain_bridge(), mode=Mode.Application))
