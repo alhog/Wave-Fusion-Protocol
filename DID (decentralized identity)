@@ -1,0 +1,14 @@
+# DID Registry Contract
+from pyteal import *
+
+def did_registry():
+    # Define DID registry logic
+    on_register = Seq([
+        App.localPut(Int(0), Bytes("user_did"), Txn.sender()),
+        Return(Int(1))
+    ])
+
+    return on_register
+
+if __name__ == "__main__":
+    print(compileTeal(did_registry(), mode=Mode.Application))
