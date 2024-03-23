@@ -1,0 +1,14 @@
+from pyteal import *
+
+def periodic_payment_program():
+    # Check for a payment transaction
+    on_payment = Seq([
+        Assert(Txn.type_enum() == Int(1)),  # Pay transaction
+        Assert(Txn.fee() < Int(4000)),  # Limit transaction fee
+        Return(Int(1))
+    ])
+
+    return on_payment
+
+if __name__ == "__main__":
+    print(compileTeal(periodic_payment_program(), mode=Mode.Application))
