@@ -1,7 +1,7 @@
 # Wave-Fusion-Protocol
 # Quasi Harmonic Oscillation: Decentralized Legal Infrastructure
 
-[!Designer.png](https://github.com/alhog/Wave-Fusion-Protocol/blob/main/Designer.png?raw=true)
+![alt text](https://github.com/alhog/Wave-Fusion-Protocol/blob/main/Designer.png?raw=true)
 
 ## Overview
 
