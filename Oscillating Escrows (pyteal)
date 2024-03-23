@@ -1,0 +1,21 @@
+# escrow.py
+from pyteal import *
+
+def escrow_program():
+    on_creation = Seq([
+        App.localPut(Int(0), Bytes("seller"), Txn.sender()),
+        Return(Int(1))
+    ])
+
+    on_payment = Seq([
+        App.localPut(Int(0), Bytes("buyer"), Txn.sender()),
+        Return(Int(1))
+    ])
+
+    return Cond(
+        [Txn.application_id() == Int(0), on_creation],
+        [Txn.application_id() != Int(0), on_payment]
+    )
+
+if __name__ == "__main__":
+    print(compileTeal(escrow_program(), mode=Mode.Application))
