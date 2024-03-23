@@ -1,0 +1,14 @@
+# Simple Oracle Contract
+from pyteal import *
+
+def oracle_contract():
+    # Define oracle logic
+    on_request = Seq([
+        Assert(Txn.application_id() == Int(0)),  # Only accept requests
+        Return(Int(1))
+    ])
+
+    return on_request
+
+if __name__ == "__main__":
+    print(compileTeal(oracle_contract(), mode=Mode.Application))
