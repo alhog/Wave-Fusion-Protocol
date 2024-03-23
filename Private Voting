@@ -1,0 +1,14 @@
+# Confidential Voting Contract
+from pyteal import *
+
+def confidential_voting():
+    # Define voting logic
+    on_vote = Seq([
+        App.localPut(Int(0), Bytes("votes"), App.localGet(Int(0), Bytes("votes")) + Int(1)),
+        Return(Int(1))
+    ])
+
+    return on_vote
+
+if __name__ == "__main__":
+    print(compileTeal(confidential_voting(), mode=Mode.Application))
