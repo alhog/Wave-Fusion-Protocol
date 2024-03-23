@@ -1,0 +1,15 @@
+# Token Faucet Smart Contract
+from pyteal import *
+
+def token_faucet():
+    # Define faucet logic
+    on_request = Seq([
+        App.localPut(Int(0), Bytes("faucet_balance"), App.localGet(Int(0), Bytes("faucet_balance")) - Int(1)),
+        App.localPut(Int(0), Bytes("user_balance"), App.localGet(Int(0), Bytes("user_balance")) + Int(1)),
+        Return(Int(1))
+    ])
+
+    return on_request
+
+if __name__ == "__main__":
+    print(compileTeal(token_faucet(), mode=Mode.Application))
